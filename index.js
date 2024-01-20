@@ -1,7 +1,7 @@
 // Config files
 const express = require('express')
 const cors = require('cors')
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const app = express()
 const port = process.env.PORT || 4000
@@ -31,9 +31,23 @@ const dbConnection = () => {
 
 dbConnection()
 // Collection
+const serviceCollection = client.db('carDoctorDB').collection('services');
 
 // API methods
+app.get('/services', async (req, res) => {
+  const cursor = serviceCollection.find();
+  const result = await cursor.toArray();
+  res.send(result);
+})
 
+app.get('/services/:id', async (req, res) => {
+  const id = req.params.id;
+  const query = { _id: new ObjectId(id) }
+  const result = await serviceCollection.findOne(query);
+  res.send(result);
+})
+
+// Default get
 app.get('/', (req, res) => {
   res.send('Welcome to car doctor...')
 })
