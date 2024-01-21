@@ -32,8 +32,9 @@ const dbConnection = () => {
 dbConnection()
 // Collection
 const serviceCollection = client.db('carDoctorDB').collection('services');
+const orderCollection = client.db('carDoctorDB').collection('order');
 
-// API methods
+//Services API methods
 app.get('/services', async (req, res) => {
   const cursor = serviceCollection.find();
   const result = await cursor.toArray();
@@ -46,6 +47,8 @@ app.get('/services/:id', async (req, res) => {
   const result = await serviceCollection.findOne(query);
   res.send(result);
 })
+
+// Booking API methods
 
 // Default get
 app.get('/', (req, res) => {
