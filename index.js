@@ -32,23 +32,41 @@ const dbConnection = () => {
 dbConnection()
 // Collection
 const serviceCollection = client.db('carDoctorDB').collection('services');
-const orderCollection = client.db('carDoctorDB').collection('order');
+const bookingCollection = client.db('carDoctorDB').collection('bookings');
 
 //Services API methods
 app.get('/services', async (req, res) => {
-  const cursor = serviceCollection.find();
-  const result = await cursor.toArray();
+  const result = await serviceCollection.find().toArray();
   res.send(result);
 })
 
 app.get('/services/:id', async (req, res) => {
   const id = req.params.id;
   const query = { _id: new ObjectId(id) }
-  const result = await serviceCollection.findOne(query);
+  const options = {
+      projection: { title: 1, price: 1, service_id: 1, img: 1 },
+    };
+  const result = await serviceCollection.findOne(query, options);
   res.send(result);
 })
 
 // Booking API methods
+
+app.get('/bookings', async (req, res) => {
+  console.log(req.query.email)
+  let query = {};
+  if(req.query?.email){
+    query = {email: req.query.email}
+  }
+  const result = await bookingCollection.find(query).toArray();
+  res.send(result);
+})
+
+app.post('/bookings', async (req, res) => {
+  const booking = req.body;
+  const result = await bookingCollection.insertOne(booking)
+  res.send(result);
+})
 
 // Default get
 app.get('/', (req, res) => {
